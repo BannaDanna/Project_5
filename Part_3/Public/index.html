@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <h1>Where is the <span id = "name"></span>(<span id = "idNum"></span>)?<br/></h1>
+    <p>Latitude: <span id="lat"></span><br/></p>
+    <p>Longitude: <span id="lon"></span><br/></p>
+    <p>Altitude: <span id="alt"></span><br/></p>
+
+    <label for="fname">First name: </label>
+    <input type="text" id="fname" name="fname">
+    <input type = "button" value="store cords" onclick="getISS()" />
+
+    <script>
+
+        
+
+        const api_url = 'https://api.wheretheiss.at/v1/satellites/25544';
+        async function getISS() {
+            const ISSResponse = await fetch(api_url);
+            const ISSData = await ISSResponse.json();
+            const latitude = ISSData.latitude;
+            const longitude = ISSData.longitude;
+            const altitude = ISSData.altitude;
+            const ID = ISSData.id;
+            const name = ISSData.name;
+            const fname = document.getElementById("fname").value;
+            const sendData = { latitude, longitude, fname, altitude, ID, name};
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(sendData)
+            };
+            const post_response = await fetch('/api', options);
+            const post_data = await post_response.json();
+            console.log(post_data);
+            document.getElementById('lat').textContent = latitude;
+            document.getElementById('lon').textContent = longitude;
+            document.getElementById('alt').textContent = altitude;
+            document.getElementById('idNum').textContent = ID;
+            document.getElementById('name').textContent = name;
+
+        }
+
+        getISS().catch(error => {
+            console.log("error");
+            console.log(error);
+        });
+    </script>
+    
+</body>
+</html>
